@@ -1,4 +1,5 @@
-// this program only send in serial, data as it arrived in  YCbCr422.
+// this program only send in serial, data as it arrived QCIF RGB.
+// I just don't know how to deal with SIOC and SIOD
 
 int hrefPin = 13;
 int vsyncPin = 12;
@@ -18,8 +19,10 @@ int d4 = 0;
 int d5 = 0;
 int d6 = 0;
 int d7 = 0;
-byte buf[614400]; // Buffer an image 640x480 with 2 bytes by pixels in average
+byte buf[76032]; // Buffer an image 640x480 with 2 bytes by pixels in average
 int clockPin = A0;
+int siocPin = A4;
+int siodPin = A5;
 int k = 0;
 
 void setup()
@@ -36,20 +39,21 @@ void setup()
   pinMode(d6Pin, INPUT);
   pinMode(d7Pin, INPUT);
   pinMode(clockPin, OUTPUT);
+  pinMode(siocPin, OUTPUT);
+  pinMode(siodPin, OUTPUT);
   attachInterrupt(0, blink, RISING); // Detect any rising edge on PCLK
 }
 
 void loop()
 {
   analogWrite(clockPin, 160); // 10MHz on XCLK 
-  if(k >= 614400)             // I an image is complete 
+  if(k >= 76032)             // I an image is complete 
   {
-    for (int i=0; i <= 614400; i++)
+    for (int i=0; i <= 76032; i++)
     {
       Serial.println(buf[i]); // write the image on the serial port
     } 
     k = 0; // Reset k for a new image capture
-
   }  
 }
 
@@ -68,7 +72,6 @@ void blink()
       d6 = digitalRead(d6Pin);
       d7 = digitalRead(d7Pin);
       buf[k++] = (d0 + d1*2 + d2*4 + d3*8 + d4*16 + d5*32 + d6*64 + d7*128); 
-
     }
   }
 }
