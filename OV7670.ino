@@ -2,7 +2,6 @@
 // I just don't know how to deal with SIOC and SIOD
 
 #include <Wire.h>
-#define ADDRESS         0x21 //Define i2c address of OV7670
 
 int hrefPin = 13;
 int vsyncPin = 12;
@@ -23,15 +22,13 @@ int d5 = 0;
 int d6 = 0;
 int d7 = 0;
 byte buf[76032]; // Buffer an image 176x144 in RGB with 3 bytes by pixels
-int clockPin = A0;
-int siocPin = A4;
-int siodPin = A5;
+int clockPin = 11;
 int k = 0;
 
 void setup()
 {
   Wire.begin();
-  Wire.beginTransmission(ADDRESS);
+  Wire.beginTransmission(0x21); //Define i2c address of OV7670
   Wire.write(0x12); // set the register COM12
   Wire.write(0x0C); // data to send -> QCIF RGB
   Wire.endTransmission();
@@ -47,14 +44,12 @@ void setup()
   pinMode(d6Pin, INPUT);
   pinMode(d7Pin, INPUT);
   pinMode(clockPin, OUTPUT);
-  pinMode(siocPin, OUTPUT);
-  pinMode(siodPin, OUTPUT);
   attachInterrupt(0, blink, RISING); // Detect any rising edge on PCLK
 }
 
 void loop()
 {
-  analogWrite(clockPin, 160); // 10MHz on XCLK 
+  digitalWrite(clockPin, 160); // 10MHz on XCLK 
   if(k >= 76032)             // I an image is complete 
   {
     for (int i=0; i <= 76032; i++)
