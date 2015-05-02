@@ -1,6 +1,9 @@
 // this program only send in serial, data as it arrived QCIF RGB.
 // I just don't know how to deal with SIOC and SIOD
 
+#include <Wire.h>
+#define ADDRESS         0x21 //Define i2c address of OV7670
+
 int hrefPin = 13;
 int vsyncPin = 12;
 int d0Pin = 3;
@@ -19,7 +22,7 @@ int d4 = 0;
 int d5 = 0;
 int d6 = 0;
 int d7 = 0;
-byte buf[76032]; // Buffer an image 640x480 with 2 bytes by pixels in average
+byte buf[76032]; // Buffer an image 176x144 in RGB with 3 bytes by pixels
 int clockPin = A0;
 int siocPin = A4;
 int siodPin = A5;
@@ -27,6 +30,11 @@ int k = 0;
 
 void setup()
 {
+  Wire.begin();
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(0x12); // set the register COM12
+  Wire.write(0x0C); // data to send -> QCIF RGB
+  Wire.endTransmission();
   Serial.begin(115200);
   pinMode(vsyncPin, INPUT);
   pinMode(hrefPin, INPUT);
@@ -75,4 +83,3 @@ void blink()
     }
   }
 }
-
