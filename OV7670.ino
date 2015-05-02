@@ -1,6 +1,4 @@
 // this program only send in serial, data as it arrived QCIF RGB.
-// I just don't know how to deal with SIOC and SIOD
-
 #include <Wire.h>
 
 int hrefPin = 13;
